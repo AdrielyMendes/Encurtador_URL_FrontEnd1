@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Encurtador de Links</title>
+    <link rel="icon" href="./assets/favicon.ico">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="./css/styles.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        beige: '#FAF7F2',
+                        cocoa: '#4E342E',
+                        mocha: '#6D4C41',
+                        chocolate: '#3E2723',
+                        latte: '#D7CCC8',
+                        creme: '#EFEBE9'
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+
+<body class="bg-beige text-chocolate min-h-screen flex flex-col items-center p-6">
+
+    <div class="max-w-2xl w-full">
+        <!-- Cabeçalho -->
+        <header class="text-center mb-8">
+            <div class="flex justify-center items-center gap-2 text-3xl font-bold text-chocolate">
+                <i class="fa-solid fa-link text-mocha"></i>
+                <h1>Encurtador de Links</h1>
+            </div>
+            <p class="text-mocha mt-2">Transforme links longos em URLs curtas e fáceis de compartilhar</p>
+        </header>
+
+        <!-- Formulário -->
+        <form id="form-link" class="bg-cocoa text-creme p-6 rounded-2xl shadow-lg mb-10">
+            <label class="block font-semibold mb-1">Legenda do link <span class="text-latte">*</span></label>
+            <input id="link-title" type="text" placeholder="Ex: Meu portfólio, Site da empresa..."
+                class="w-full mb-4 border border-latte rounded-lg px-4 py-2 bg-mocha text-creme placeholder-latte focus:ring-2 focus:ring-latte outline-none">
+
+            <label class="block font-semibold mb-1">URL para encurtar <span class="text-latte">*</span></label>
+            <div class="flex gap-2">
+                <input id="link-url" type="url" placeholder="https://exemplo.com/sua-url-muito-longa..."
+                    class="flex-1 border border-latte rounded-lg px-4 py-2 bg-mocha text-creme placeholder-latte focus:ring-2 focus:ring-latte outline-none">
+                <button type="submit"
+                    class="bg-chocolate hover:bg-mocha text-creme px-6 py-2 rounded-lg font-semibold shadow">
+                    Encurtar
+                </button>
+            </div>
+        </form>
+
+        <!-- Lista de Links -->
+        <section>
+            <h2 class="text-2xl font-bold mb-4 text-chocolate">Meus Links</h2>
+
+            <div id="links-list">
+                <!-- Card exemplo -->
+                <div class="bg-cocoa text-creme p-5 rounded-2xl shadow-lg mb-4">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h3 class="text-lg font-semibold">Exame Seleção Técnico 2026</h3>
+                            <a href="http://localhost:3333/1a2b3" target="_blank"
+                                class="text-latte hover:underline text-sm">
+                                http://localhost:3333/1a2b3
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-2 text-sm text-latte mt-2">
+                        <i class="fa-regular fa-calendar"></i>
+                        <span>Criado em 01/10/2025, 09:06</span>
+                    </div>
+
+                    <div class="flex items-center gap-2 mt-4">
+                        <button
+                            class="bg-mocha hover:bg-chocolate text-creme px-4 py-2 rounded-lg flex items-center gap-2 font-medium">
+                            <i class="fa-regular fa-copy"></i> Copiar
+                        </button>
+                        <button class="bg-mocha hover:bg-chocolate p-2 rounded-lg text-creme">
+                            <i class="fa-regular fa-trash-can"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script src="./js/app.js"></script>
+</body>
+
+</html>
