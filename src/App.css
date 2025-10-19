@@ -1,3 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 body {
   background-color: #f9f1e7; /* bege suave */
   color: #3e2723; /* marrom chocolate escuro */
