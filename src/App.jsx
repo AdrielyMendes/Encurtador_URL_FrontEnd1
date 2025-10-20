@@ -79,7 +79,7 @@ function App() {
 
     try {
       const res = await fetch(`${API_BASE}/links/${id}`, {
-        method: "PATCH", // ou PUT, dependendo da sua API
+        method: "PUT", // 🔹 alterado de PATCH para PUT
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ legenda: editTitle, urlOriginal: editUrl }),
       });
@@ -110,7 +110,6 @@ function App() {
           </p>
         </header>
 
-        {/* RF-06: Formulário de Criação */}
         <form
           onSubmit={handleSubmit}
           className="bg-cocoa text-creme p-6 rounded-2xl shadow-md mb-10"
@@ -144,7 +143,6 @@ function App() {
           </div>
         </form>
 
-        {/* RF-07: Listagem de Links */}
         <section>
           <h2 className="text-2xl font-bold mb-4 text-chocolate">Meus Links</h2>
 
@@ -160,7 +158,6 @@ function App() {
               >
                 <div className="flex justify-between items-start">
                   <div>
-                    {/* RF-08: Card de Link */}
                     {editingId === link.id ? (
                       <>
                         <input
@@ -211,7 +208,6 @@ function App() {
                   <span>{link.cliques || 0} cliques</span>
                 </div>
 
-                {/* RF-09: Ações do Card */}
                 <div className="flex items-center gap-2 mt-4">
                   {editingId === link.id ? (
                     <>
