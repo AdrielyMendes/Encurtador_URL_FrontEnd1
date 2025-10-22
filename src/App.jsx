@@ -3,11 +3,12 @@ import './App.css';
 
 function App() {
   const [links, setLinks] = useState([]);
-  const [title, setTitle] = useState("");
+  const [legenda, setLegenda] = useState("");
   const [url, setUrl] = useState("");
-  const [editingId, setEditingId] = useState(null);
-  const [editTitle, setEditTitle] = useState("");
-  const [editUrl, setEditUrl] = useState("");
+  const [editorId, setEditorId] = useState(null);
+  const [editorLegenda, setEditlegenda] = useState("");
+  const [editorUlr, setEditorUrl] = useState("");
+  const [linkCopiadoId, setLinkCopiadoId] = useState(null);
 
   const API_BASE = "http://localhost:3000";
 
@@ -27,7 +28,7 @@ function App() {
   async function handleSubmit(e) {
     e.preventDefault();
 
-    if (!title || !url) {
+    if (!legenda || !url) {
       alert("Preencha todos os campos!");
       return;
     }
@@ -36,7 +37,7 @@ function App() {
       const response = await fetch(`${API_BASE}/links`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ legenda: title, urlOriginal: url }),
+        body: JSON.stringify({ legenda: legenda, urlOriginal: url }),
       });
 
       if (!response.ok) {
@@ -46,7 +47,7 @@ function App() {
 
       const novoLink = await response.json();
       setLinks([novoLink, ...links]);
-      setTitle("");
+      setLegenda("");
       setUrl("");
     } catch (error) {
       alert(error.message);
@@ -65,37 +66,50 @@ function App() {
     }
   }
 
-  function handleEditInit(link) {
-    setEditingId(link.id);
-    setEditTitle(link.legenda);
-    setEditUrl(link.original_url);
+  async function handleEditInit(link) {
+    setEditorId(link.id);
+    setEditlegenda(link.legenda);
+    setEditorUrl(link.original_url);
   }
 
   async function handleEditSave(id) {
-    if (!editTitle || !editUrl) {
+    if (!editorLegenda || !editorUlr) {
       alert("Preencha todos os campos!");
       return;
     }
 
     try {
       const res = await fetch(`${API_BASE}/links/${id}`, {
-        method: "PUT", // 🔹 alterado de PATCH para PUT
+        method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ legenda: editTitle, urlOriginal: editUrl }),
+        body: JSON.stringify({ legenda: editorLegenda, urlOriginal: editorUlr }),
       });
       if (!res.ok) throw new Error("Erro ao atualizar link");
 
       const updatedLink = await res.json();
       setLinks(links.map((l) => (l.id === id ? updatedLink : l)));
-      setEditingId(null);
+      setEditorId(null);
     } catch (error) {
       alert(error.message);
     }
   }
 
-  function handleEditCancel() {
-    setEditingId(null);
+  async function handleEditCancel() {
+    setEditorId(null);
   }
+
+  async function handleCopyLink(linkId, linkCurto) {
+
+    try {
+    await navigator.clipboard.writeText(linkCurto);
+    setLinkCopiadoId(linkId);
+
+    setTimeout(() => setLinkCopiadoId(null), 3000);
+    
+  } catch (error) {
+    alert("Erro ao copiar o link");
+  }
+}
 
   return (
     <div className="bg-beige text-chocolate min-h-screen flex flex-col items-center p-6 font-sans">
@@ -121,8 +135,8 @@ function App() {
             type="text"
             placeholder="Ex: Meu portfólio, Site da empresa..."
             className="w-full mb-4 rounded-lg px-4 py-2 bg-mocha text-creme placeholder-latte focus:ring-2 focus:ring-latte outline-none"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
+            value={legenda}
+            onChange={(e) => setLegenda(e.target.value)}
           />
 
           <label className="block font-semibold mb-1">URL para encurtar</label>
@@ -157,20 +171,21 @@ function App() {
                 className="bg-cocoa text-creme p-5 rounded-2xl shadow-md mb-4"
               >
                 <div className="flex justify-between items-start">
+
                   <div>
-                    {editingId === link.id ? (
+                    {editorId === link.id ? (
                       <>
                         <input
                           type="text"
                           className="w-full mb-2 rounded-lg px-3 py-1 text-chocolate"
-                          value={editTitle}
-                          onChange={(e) => setEditTitle(e.target.value)}
+                          value={editorLegenda}
+                          onChange={(e) => setEditlegenda(e.target.value)}
                         />
                         <input
                           type="url"
                           className="w-full mb-2 rounded-lg px-3 py-1 text-chocolate"
-                          value={editUrl}
-                          onChange={(e) => setEditUrl(e.target.value)}
+                          value={editorUlr}
+                          onChange={(e) => setEditorUrl(e.target.value)}
                         />
                       </>
                     ) : (
@@ -178,14 +193,8 @@ function App() {
                         <h3 className="text-lg font-semibold">{link.legenda}</h3>
                         <p className="text-sm mt-1">
                           <span className="font-semibold">Link curto: </span>
-                          <a
-                            href={`${API_BASE}/${link.codigo}`}
-                            target="_blank"
-                            rel="noreferrer"
-                            className="text-latte hover:underline"
-                          >
-                            {`${API_BASE}/${link.codigo}`}
-                          </a>
+                          <a href={`${API_BASE}/r/${link.codigo}`} target="_blank" rel="noreferrer" className="text-latte hover:underline" > {`${API_BASE}/r/${link.codigo}`} </a>
+
                         </p>
                         <p className="text-sm mt-1">
                           <span className="font-semibold">URL original: </span>
@@ -196,20 +205,13 @@ function App() {
                   </div>
                 </div>
 
-                <div className="flex items-center gap-2 text-sm text-latte mt-2">
-                  <i className="fa-regular fa-calendar"></i>
-                  <span>
-                    Criado em {link.created_at ? new Date(link.created_at).toLocaleString() : "-"}
-                  </span>
-                </div>
-
                 <div className="flex items-center gap-2 text-sm text-latte mt-1">
                   <i className="fa-regular fa-eye"></i>
-                  <span>{link.cliques || 0} cliques</span>
+                  <span>{link.contagem_cliques || 0} cliques</span>
                 </div>
 
                 <div className="flex items-center gap-2 mt-4">
-                  {editingId === link.id ? (
+                  {editorId === link.id ? (
                     <>
                       <button
                         className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg font-medium"
@@ -229,7 +231,7 @@ function App() {
                       <button
                         className="bg-mocha hover:bg-chocolate transition text-creme px-4 py-2 rounded-lg flex items-center gap-2 font-medium"
                         onClick={() =>
-                          navigator.clipboard.writeText(`${API_BASE}/${link.codigo}`)
+                          handleCopyLink(link.id, `${API_BASE}/r/${link.codigo}`)
                         }
                       >
                         <i className="fa-regular fa-copy"></i> Copiar
@@ -247,9 +249,20 @@ function App() {
                         <i className="fa-regular fa-trash-can"></i>
                       </button>
                     </>
+
                   )}
                 </div>
+
+                <div className="mt-2">
+                  {linkCopiadoId === link.id && (
+                    <div className="mb-4 text-green-600 font-semibold text-center bg-green-100 p-2 rounded-lg shadow-sm">
+                      ✅ Link copiado para a área de transferência!
+                    </div>
+                  )}
+                </div>
+
               </div>
+
             ))}
           </div>
         </section>
